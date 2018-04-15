@@ -52,8 +52,12 @@ public class SudokuSolver {
 
     }
 
+    //===================================================================
+    //Brian "Up"
+    //Rafael "Down"
+    //===================================================================
     //checks for violations in x axis
-    public static boolean checkColumn(int[][] board, int x, int y, int value){
+    public static boolean checkRow(int[][] board, int x, int y, int value){
         for (int row = 0; row < 9; row++) {
             if (board[y][row] == value) {
                 return false;
@@ -62,10 +66,8 @@ public class SudokuSolver {
         return true;
     }
 
-    
-
     //checks for violations in y axis
-    public static boolean checkRow(int[][] board, int x, int y, int value){
+    public static boolean checkColumn(int[][] board, int x, int y, int value){
         for (int col = 0; col < 9; col++) {
             if (board[col][x] == value) {
                 return false;
@@ -97,35 +99,27 @@ public class SudokuSolver {
         Random generator = new Random();
         //difficulty meter, the less iterations the harder it gets.
         //make sure there's at least 17 hints if not puzzle is unsolvable
-        for(int i = 0; i < 35; i++){
-            board[generator.nextInt(9)][generator.nextInt(9)] = generator.nextInt(9) + 1;
-        }
-    }
-
-    //makes sure hints are never repeated in column, row, and nonet
-    public static void hintVerifier(int[][] board){
-        int rowSum = IntStream.of(board[0]).sum();
-        int curr = 0;
-        int prev = 0;
-        for(int y = 0; y < 9; y++) {
-            for(int x = 0; x < 9; x++) {
-
-                if(board[x][y] != 0){
-                    prev = board[x][y];
-                }
+        int genX;
+        int genY;
+        int value;
+        for(int i = 0; i < 38; i++){
+            genX = generator.nextInt(9);
+            genY = generator.nextInt(9);
+            value = generator.nextInt(9) + 1;
+            if (checkValid(board, genX, genY, value)){
+                board[genY][genX] = value;
+            } else {
+                board[genY][genX] = 0;
             }
         }
-
-
-
-
     }
+
 
     //checks for all violations of row, column, nonet, if none are found then place integer in cell
     //input board, x and y values to give you specific cells, and value to input in case no violations are found
     //returns true if all are valid (row & col & nonet)
     public static boolean checkValid(int[][] board, int x, int y, int value){
-        return (checkColumn(board, x, y, value) & checkRow(board, x, y, value) & checkNonet(board, x, y, value)); // returns true if all are valid
+        return (checkColumn(board, x, y, value) && checkRow(board, x, y, value) && checkNonet(board, x, y, value)); // returns true if all are valid
 
     }
 
@@ -134,7 +128,14 @@ public class SudokuSolver {
     public static void boardPrinter(int[][] board){
         for(int y = 0; y < 9; y++) {
             for(int x = 0; x < 9; x++) {
+                if (x == 3 || x == 6){
+                    System.out.print(" ");
+                }
                 System.out.print("|" + "_" + board[y][x] + "_" + "|");
+            }
+            if (y == 2 || y == 5) {
+                System.out.println();
+
             }
             System.out.println();
         }
@@ -147,7 +148,7 @@ public class SudokuSolver {
         int[][] board = new int[9][9];
 
         hintPlacer(board);
-        hintVerifier(board);
+       //hintVerifier(board);
         boardPrinter(board);
 
 
