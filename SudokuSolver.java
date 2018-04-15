@@ -34,8 +34,8 @@ public class SudokuSolver {
 
     //checks for violations in x axis
     public static boolean checkColumn(int[][] board, int x, int y, int value){
-        for (int rowNumber = 0; rowNumber < 9; rowNumber++) {
-            if (board[y][rowNumber] == value) {
+        for (int row = 0; row < 9; row++) {
+            if (board[y][row] == value) {
                 return false;
             }
         }
@@ -44,8 +44,8 @@ public class SudokuSolver {
 
     //checks for violations in y axis
     public static boolean checkRow(int[][] board, int x, int y, int value){
-        for (int colNumber = 0; colNumber < 9; colNumber++) {
-            if (board[colNumber][x] == value) {
+        for (int col = 0; col < 9; col++) {
+            if (board[col][x] == value) {
                 return false;
             }
         }
@@ -59,10 +59,14 @@ public class SudokuSolver {
         int[] checkColRange = {nonetColCenterCell - 1, nonetColCenterCell, nonetColCenterCell + 1};
         int[] checkRowRange = {nonetRowCenterCell - 1, nonetRowCenterCell, nonetRowCenterCell + 1};
 
-
-        for (int i : checkColRange) {
-            continue;
+        for (int col : checkColRange){
+            for (int row : checkRowRange){
+                if (board[col][row] == value){
+                    return false;
+                }
+            }
         }
+        return true;
         
     }
 
@@ -96,21 +100,9 @@ public class SudokuSolver {
 
     //checks for all violations of row, column, nonet, if none are found then place integer in cell
     //input board, x and y values to give you specific cells, and value to input in case no violations are found
-    public static void checkValid(int[][] board, int x, int y, int value){
-
-        if (checkColumn()){
-
-        }
-
-        if (checkRow()){
-
-        }
-
-
-        if (checkNonet()){
-
-        }
-
+    //returns true if all are valid (row & col & nonet)
+    public static boolean checkValid(int[][] board, int x, int y, int value){
+        return (checkColumn(board, x, y, value) & checkRow(board, x, y, value) & checkNonet(board, x, y, value)); // returns true if all are valid
 
     }
 
