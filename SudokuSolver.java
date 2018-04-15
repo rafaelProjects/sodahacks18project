@@ -1,38 +1,33 @@
 //////////////////////////////////////////////////////////
 // Sudoku Solver Program
 // Name: SudokuSolver.java
-// Author: Rafael Antonio Martinez Salguero
+// Authors: Rafael Antonio Martinez Salguero, Brian Mickel
 // Date 04/14/2018
 // Purpose: Sudoku Solver
+// Time to finish: 13 hours 56 mins.
 //////////////////////////////////////////////////////////
 
-//https://en.wikipedia.org/wiki/Sudoku_solving_algorithms <-- Use this for future generations of this project
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.stream.IntStream;
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+
+
 
 public class SudokuSolver {
-
+    //this should be the board with hint placed in it
     public static int[][] initialBoard;
+
     public static int[][] solvedBoard;
-
-    //if numberPlacer finds a violation backtracker will increase previous changeable number
-    // by one.
-    public static void backtracker(){
-
-    }
-
 
     //Main function that solves sudoku
     public static boolean numberPlacerBacktracker(int[][] board){
-        initialBoard = board;
-        //Random generator = new Random();
         for(int y = 0; y < 9; y++) { //for each column
             for (int x = 0; x < 9; x++) { //for each row
-                if ( board[y][x] == 0) { //make sure its not a hint
-                    for (int val=1; val<=9; val++){
-                        if (checkValid(board, y, x, val)){
+                if (board[y][x] == 0) { //make sure its not a hint, every value that is not a zero should be a hint
+                    for (int val = 1; val <= 9; val++){
+                        if (checkValid(board, x, y, val)){
                             board[y][x] = val;
                             if (numberPlacerBacktracker(board)){
                                 solvedBoard = board;
@@ -42,14 +37,13 @@ public class SudokuSolver {
                             }
                         }
                     }
+                    solvedBoard = board;
                     return false;
-
                 }
             }
         }
         solvedBoard = board;
         return true;
-
     }
 
     //===================================================================
@@ -95,7 +89,7 @@ public class SudokuSolver {
     }
 
     //places numbers on board that cannot be changed, these are the hints
-    public static void hintPlacer(int[][] board){
+    public static int[][] hintPlacer(int[][] board){
         Random generator = new Random();
         //difficulty meter, the less iterations the harder it gets.
         //make sure there's at least 17 hints if not puzzle is unsolvable
@@ -112,6 +106,7 @@ public class SudokuSolver {
                 board[genY][genX] = 0;
             }
         }
+        return board;
     }
 
 
@@ -127,54 +122,69 @@ public class SudokuSolver {
     //prints board
     public static void boardPrinter(int[][] board){
         for(int y = 0; y < 9; y++) {
-            for(int x = 0; x < 9; x++) {
-                if (x == 3 || x == 6){
-                    System.out.print(" ");
-                }
-                System.out.print("|" + "_" + board[y][x] + "_" + "|");
+            if(y % 3 == 0 && y != 0) {
+                System.out.println(" -------------------------------");
             }
-            if (y == 2 || y == 5) {
-                System.out.println();
-
+            for(int x = 0; x < 9; x++) {
+                if(x % 3 == 0 && x != 0) {
+                    System.out.print(" | ");
+                }
+                System.out.print(" " + board[y][x] + " ");
             }
             System.out.println();
         }
+        System.out.println("\n________________________________\n");
 
     }
+
+
 
 
     public static void main(String[] args) {
         //creates board
         int[][] board = new int[9][9];
 
-        hintPlacer(board);
-       //hintVerifier(board);
-        boardPrinter(board);
+        board = hintPlacer(board); //places hints on board
+        System.out.println();
+        System.out.println("             Pending");
+        System.out.println("             -------");
+        boardPrinter(board);//prints board with hints
 
+        // ------ UI -------- //
+        int[][] boardUI = board.clone();//board that user interacts with
+        int[][] boardCopy = board;
+        Timer t = new Timer(); //Timer starts for users to be challenged
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //Once user runs out of time to answer return answer of solved sudoku board
+                numberPlacerBacktracker(boardCopy);
+                System.out.println("             Solved");
+                System.out.println("             ------");
+                boardPrinter(solvedBoard);
+                t.cancel();
+                t.purge();
+                //System.exit(0);
+            }
+        }, 60000*3 /*<--3 mins*/);
+        Scanner s = new Scanner(System.in);
+        for (int i = 0; i < 81; i++) {
+            System.out.println("Enter guess for cell");
+            System.out.println("pls enter x coordinate:");
+            int x = s.nextInt();
+            System.out.println("pls enter y coordinate:");
+            int y = s.nextInt();
+            System.out.println("pls enter cell value that you want");
+            int value = s.nextInt();
+            boardUI[y][x] = value;
+            boardPrinter(boardUI);
+        }
 
-        int[][] mockBoard={{9,0,3,1,7,4,2,5,8},
-                            {1,7,8,3,2,5,6,4,9},
-                            {2,5,4,6,8,9,7,3,1},
-                            {8,2,1,4,3,7,5,9,6},
-                            {4,9,6,8,5,2,3,1,7},
-                            {7,3,5,9,6,1,8,0,4},
-                            {5,0,9,7,1,3,4,6,2},
-                            {3,1,7,2,4,6,9,8,5},
-                            {6,4,2,5,9,8,1,7,3}};
-//        {{9,6,3,1,7,4,2,5,8},
-//        {1,7,8,3,2,5,6,4,9},
-//        {2,5,4,6,8,9,7,3,1},
-//        {8,2,1,4,3,7,5,9,6},
-//        {4,9,6,8,5,2,3,1,7},
-//        {7,3,5,9,6,1,8,2,4},
-//        {5,8,9,7,1,3,4,6,2},
-//        {3,1,7,2,4,6,9,8,5},
-//        {6,4,2,5,9,8,1,7,3}};
-        System.out.println("Hold up");
-        boardPrinter(mockBoard);
-        numberPlacerBacktracker(mockBoard);
-        boardPrinter(initialBoard);
-        System.out.println("Solved");
-        boardPrinter(solvedBoard);
+        /*//this prints the answered sudoku puzzle
+        numberPlacerBacktracker(board); //solves sudoku puzzle
+        System.out.println("             Solved");
+        System.out.println("             ------");
+        boardPrinter(solvedBoard); //prints solved sudoku*/
+
     }
 }
