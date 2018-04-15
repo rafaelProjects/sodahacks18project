@@ -58,7 +58,6 @@ public class SudokuSolver {
         int nonetRowCenterCell = 3 * (x/3) + 1;
         int[] checkColRange = {nonetColCenterCell - 1, nonetColCenterCell, nonetColCenterCell + 1};
         int[] checkRowRange = {nonetRowCenterCell - 1, nonetRowCenterCell, nonetRowCenterCell + 1};
-
     }
 
     //places numbers on board that cannot be changed, these are the hints
@@ -120,6 +119,7 @@ public class SudokuSolver {
         }
 
     }
+
 
     public static void main(String[] args) {
         //creates board
