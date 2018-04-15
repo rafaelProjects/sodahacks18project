@@ -14,7 +14,8 @@ import java.util.stream.IntStream;
 
 public class SudokuSolver {
 
-
+    public static int[][] initialBoard;
+    public static int[][] solvedBoard;
 
     //if numberPlacer finds a violation backtracker will increase previous changeable number
     // by one.
@@ -24,13 +25,30 @@ public class SudokuSolver {
 
 
     //Main function that solves sudoku
-    public static void numberPlacer(int[][] board){
-        Random generator = new Random();
-        for(int y = 0; y < 9; y++) {
-            for (int x = 0; x < 9; x++) {
-                board[y][x] = generator.nextInt(9) + 1;
+    public static boolean numberPlacerBacktracker(int[][] board){
+        initialBoard = board;
+        //Random generator = new Random();
+        for(int y = 0; y < 9; y++) { //for each column
+            for (int x = 0; x < 9; x++) { //for each row
+                if ( board[y][x] == 0) { //make sure its not a hint
+                    for (int val=1; val<=9; val++){
+                        if (checkValid(board, y, x, val)){
+                            board[y][x] = val;
+                            if (numberPlacerBacktracker(board)){
+                                solvedBoard = board;
+                                return true;
+                            } else {
+                                board[y][x] = 0;
+                            }
+                        }
+                    }
+                    return false;
+
+                }
             }
         }
+        solvedBoard = board;
+        return true;
 
     }
 
@@ -131,5 +149,31 @@ public class SudokuSolver {
         hintPlacer(board);
         hintVerifier(board);
         boardPrinter(board);
+
+
+        int[][] mockBoard={{9,0,3,1,7,4,2,5,8},
+                            {1,7,8,3,2,5,6,4,9},
+                            {2,5,4,6,8,9,7,3,1},
+                            {8,2,1,4,3,7,5,9,6},
+                            {4,9,6,8,5,2,3,1,7},
+                            {7,3,5,9,6,1,8,0,4},
+                            {5,0,9,7,1,3,4,6,2},
+                            {3,1,7,2,4,6,9,8,5},
+                            {6,4,2,5,9,8,1,7,3}};
+//        {{9,6,3,1,7,4,2,5,8},
+//        {1,7,8,3,2,5,6,4,9},
+//        {2,5,4,6,8,9,7,3,1},
+//        {8,2,1,4,3,7,5,9,6},
+//        {4,9,6,8,5,2,3,1,7},
+//        {7,3,5,9,6,1,8,2,4},
+//        {5,8,9,7,1,3,4,6,2},
+//        {3,1,7,2,4,6,9,8,5},
+//        {6,4,2,5,9,8,1,7,3}};
+        System.out.println("Hold up");
+        boardPrinter(mockBoard);
+        numberPlacerBacktracker(mockBoard);
+        boardPrinter(initialBoard);
+        System.out.println("Solved");
+        boardPrinter(solvedBoard);
     }
 }
