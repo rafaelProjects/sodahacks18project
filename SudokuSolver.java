@@ -58,6 +58,9 @@ public class SudokuSolver {
         int nonetRowCenterCell = 3 * (x/3) + 1;
         int[] checkColRange = {nonetColCenterCell - 1, nonetColCenterCell, nonetColCenterCell + 1};
         int[] checkRowRange = {nonetRowCenterCell - 1, nonetRowCenterCell, nonetRowCenterCell + 1};
+        for (int i : checkColRange) {
+            continue;
+        }
 
     }
 
