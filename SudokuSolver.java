@@ -14,6 +14,8 @@ import java.util.stream.IntStream;
 
 public class SudokuSolver {
 
+
+
     //if numberPlacer finds a violation backtracker will increase previous changeable number
     // by one.
     public static void backtracker(){
@@ -41,6 +43,8 @@ public class SudokuSolver {
         }
         return true;
     }
+
+    
 
     //checks for violations in y axis
     public static boolean checkRow(int[][] board, int x, int y, int value){
@@ -74,6 +78,7 @@ public class SudokuSolver {
     public static void hintPlacer(int[][] board){
         Random generator = new Random();
         //difficulty meter, the less iterations the harder it gets.
+        //make sure there's at least 17 hints if not puzzle is unsolvable
         for(int i = 0; i < 35; i++){
             board[generator.nextInt(9)][generator.nextInt(9)] = generator.nextInt(9) + 1;
         }
