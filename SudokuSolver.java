@@ -13,8 +13,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-
-
 public class SudokuSolver {
     //this should be the board with hint placed in it
     public static int[][] initialBoard;
