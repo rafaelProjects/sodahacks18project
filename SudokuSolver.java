@@ -4,7 +4,7 @@
 // Authors: Rafael Antonio Martinez Salguero, Brian Mickel
 // Date 04/14/2018
 // Purpose: Sudoku Solver
-// Time to finish: 13 hours 56 mins.
+// Time to finish: 13 hours
 //////////////////////////////////////////////////////////
 
 import java.util.Random;
@@ -46,10 +46,7 @@ public class SudokuSolver {
         return true;
     }
 
-    //===================================================================
-    //Brian "Up"
-    //Rafael "Down"
-    //===================================================================
+
     //checks for violations in x axis
     public static boolean checkRow(int[][] board, int x, int y, int value){
         for (int row = 0; row < 9; row++) {
@@ -137,12 +134,39 @@ public class SudokuSolver {
 
     }
 
+    //checks if puzzle has a unique solution
+    public static boolean noSolutionChecker(int[][] board){
+        boolean check = false;
+        for (int y = 0; y < 9; y++){
+            for (int x = 0; x < 9; x++){
+                if (board[y][x] == 0){
+                    check = true;
+                    break;
+                }
+            }
+        }
+        if (check){
+            return true;
+        }
+        return false;
+    }
 
+    //if no solution is found print unsolved instead of solved
+    public static void solvedChecker(boolean checker){
+        if (checker){
+            System.out.println("       NO UNIQUE SOLUTION");
+            System.out.println("       ------------------");
+        } else {
+            System.out.println("             Solved");
+            System.out.println("             ------");
+        }
+    }
 
 
     public static void main(String[] args) {
-        //creates board
-        int[][] board = new int[9][9];
+        int[][] board = new int[9][9]; //creates board
+
+        boolean checker = false;  //checks if puzzle has unique solution or not
 
         board = hintPlacer(board); //places hints on board
         System.out.println();
@@ -150,41 +174,11 @@ public class SudokuSolver {
         System.out.println("             -------");
         boardPrinter(board);//prints board with hints
 
-        // ------ UI -------- //
-        int[][] boardUI = board.clone();//board that user interacts with
-        int[][] boardCopy = board;
-        Timer t = new Timer(); //Timer starts for users to be challenged
-        t.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                //Once user runs out of time to answer return answer of solved sudoku board
-                numberPlacerBacktracker(boardCopy);
-                System.out.println("             Solved");
-                System.out.println("             ------");
-                boardPrinter(solvedBoard);
-                t.cancel();
-                t.purge();
-                //System.exit(0);
-            }
-        }, 60000*3 /*<--3 mins*/);
-        Scanner s = new Scanner(System.in);
-        for (int i = 0; i < 81; i++) {
-            System.out.println("Enter guess for cell");
-            System.out.println("pls enter x coordinate:");
-            int x = s.nextInt();
-            System.out.println("pls enter y coordinate:");
-            int y = s.nextInt();
-            System.out.println("pls enter cell value that you want");
-            int value = s.nextInt();
-            boardUI[y][x] = value;
-            boardPrinter(boardUI);
-        }
+        numberPlacerBacktracker(board); //solves Sudoku puzzle
+        checker = noSolutionChecker(solvedBoard);
 
-        /*//this prints the answered sudoku puzzle
-        numberPlacerBacktracker(board); //solves sudoku puzzle
-        System.out.println("             Solved");
-        System.out.println("             ------");
-        boardPrinter(solvedBoard); //prints solved sudoku*/
+        solvedChecker(checker); //lets user know if Sudoku has a unique solution or not
+        boardPrinter(solvedBoard); //prints solved Sudoku
 
     }
 }
